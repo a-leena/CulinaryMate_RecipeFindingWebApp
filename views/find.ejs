@@ -1,0 +1,27 @@
+<%- include("partials/header.ejs") %>
+
+    <div class="page-heading">
+        <h1>CHOOSE YOUR DISH TYPE</h1>
+    </div>
+    <div class="container_dishtypes">
+        <% nameCountList.forEach((nameCount)=> { %>
+            <form action="/results" method="post">
+                <input type="text" name="dishTypeName" value="<%=nameCount[0]%>" class="dishTypeName" hidden>
+                <button class="card" type="submit">
+                    <img class="dish-type-images" src="<%=imageDirectory%>/<%=nameCount[0]%>.jpg"
+                        alt="An image for <%=nameCount[0]%>">
+                    <div class="overlay">
+                        <h3>
+                            <%=nameCount[0]%>
+                        </h3>
+                        <p>
+                            <%=nameCount[1]%> Recipes
+                        </p>
+                    </div>
+                </button>
+            </form>
+            <% }); %>
+    </div>
+
+
+    <%- include("partials/footer.ejs") %>

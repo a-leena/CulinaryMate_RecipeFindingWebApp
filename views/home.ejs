@@ -1,0 +1,40 @@
+<%- include("partials/header.ejs") %>
+
+    <div class="slideshow">
+        <% imageList.forEach(image=> { %>
+            <div>
+                <img src="<%= image %>" alt="">
+            </div>
+            <% }) %>
+    </div>
+
+    <!-- Link to jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Link to Slick JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.slideshow').slick({
+                infinite: true,
+                slidesToShow: 3, // Adjust the number of images shown at a time as needed
+                slidesToScroll: 1,
+                prevArrow: '<button type="button" class="slick-prev">Previous</button>',
+                nextArrow: '<button type="button" class="slick-next">Next</button>',
+                draggable: true, // Enable dragging
+                autoplay: true, // Enable autoplay if needed
+                autoplaySpeed: 500 // Adjust autoplay speed as needed
+            });
+        });
+    </script>
+
+    <div class="about">
+        <h1>WELCOME TO <span class="webname">CulinaryMate</span></h1>
+        <p>
+            Your ultimate culinary companion for hassle-free meal preparation. Discover
+            a diverse collection of customized recipes curated to match your available ingredients and nutritional
+            preferences. Streamline your cooking experience with our tailored recipe suggestions, designed to elevate
+            your culinary journey effortlessly.
+        </p>
+    </div>
+
+    <%- include("partials/footer.ejs") %>

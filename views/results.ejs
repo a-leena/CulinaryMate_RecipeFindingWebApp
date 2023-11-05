@@ -1,0 +1,351 @@
+<%- include("partials/header.ejs") %>
+
+    <div class="page-heading">
+        <h1>CHOOSE YOUR <span class="dish-type">
+                <%=dishTypeName%>
+            </span></h1>
+    </div>
+
+    <div class="container_results">
+        <form action="/filtered-results" method="post" id="filterForm">
+            <div class="column left-column">
+                <h2>Filter by</h2>
+                <div class="content tab-container">
+                    <!-- 1 Column of Tab names -->
+                    <div class="column tab-names">
+                        <ul id="tabs">
+                            <li class="tab selected-tab" onclick="showContent(1)">Ingredients</li>
+                            <li class="tab unselected-tab" onclick="showContent(2)">Cuisine</li>
+                            <li class="tab unselected-tab" onclick="showContent(3)">Diet Type</li>
+                            <li class="tab unselected-tab" onclick="showContent(4)">Sorting Options</li>
+                        </ul>
+                        <button type="submit" id="filterBtn">Apply Filters</button>
+                    </div>
+
+                    <!-- 1 Column of Tab contents -->
+                    <div class="column tab-contents">
+                        <div id="tab1" class="tab-content selected-content">
+                            <!-- Give Ingredients -->
+                            <h3 class="filter-title">What ingredients should the recipes include?</h3>
+                            <p hidden id="list-of-ingredients">
+                                <%= ingredientList %>
+                            </p>
+                            <div class="autocomplete">
+                                <div id="addIngredient">
+                                    <input type="text" id="ingredientInput" class="ingredientInput"
+                                        oninput="showSuggestions()"
+                                        placeholder="Enter the ingredient name one at a time">
+                                    <button type="button" id="addIngredientBtn" onclick="addIngredient()">+</button>
+                                </div>
+                                <ul id="suggestionList"></ul>
+                            </div>
+
+                            <ul id="ingredientList"></ul>
+                            <input name="ingredients" value="" hidden id="ingredients">
+
+
+                        </div>
+
+                        <div id="tab2" class="tab-content unselected-content">
+                            <!-- Give Cuisines -->
+                            <h3 class="filter-title">What cuisines do you prefer?</h3>
+                            <input name="cuisines" value="" hidden id="cuisines">
+                            <div id="cuisine-check-list">
+                                <div id="cuisineAnyDiv" class="checkbox_div">
+                                    <input type="checkbox" id="cuisineAny" name="Any" class="checkbox">
+                                    <label for="cuisineAny" class="checkbox_label">
+                                        Any
+                                    </label>
+                                </div>
+                                <% for (let i=0; i<cuisineList.length; i++) {%>
+                                    <div id="cuisine<%=i%>Div" class="checkbox_div">
+                                        <input type="checkbox" id="cuisine<%= i %>" name="<%= cuisineList[i] %>"
+                                            class="checkbox">
+                                        <label for="cuisine<%= i %>" class="checkbox_label">
+                                            <%= cuisineList[i] %>
+                                        </label>
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+
+                        <div id="tab3" class="tab-content unselected-content">
+                            <!-- Give Diet Types -->
+                            <h3 class="filter-title">What diets do you prefer?</h3>
+                            <input name="diets" value="" hidden id="diets">
+                            <div id="diet-check-list">
+                                <div id="dietAnyDiv" class="checkbox_div">
+                                    <input type="checkbox" id="dietAny" name="Any" class="checkbox">
+                                    <label for="dietAny" class="checkbox_label">
+                                        Any
+                                    </label>
+                                </div>
+                                <% for (let i=0; i<dietList.length; i++) {%>
+                                    <div id="diet<%=i%>Div" class="checkbox_div">
+                                        <input type="checkbox" id="diet<%= i %>" name="<%= dietList[i] %>"
+                                            class="checkbox">
+                                        <label for="diet<%= i %>" class="checkbox_label">
+                                            <%= dietList[i] %>
+                                        </label>
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+
+                        <div id="tab4" class="tab-content unselected-content">
+                            <h3 class="filter-title">How do you want to sort your recipes?</h3>
+                            <!-- Give Sorting options -->
+                            <% for (let i=0; i<sorters.length; i++) { %>
+                                <div id="<%=sorters[i][0]%>-box" class="sorter">
+                                    <div id="<%=sorters[i][0]%>-check-div" class="checkdiv">
+                                        <input type="checkbox" id="<%=i%>" name="<%=sorters[i][0]%>"
+                                            class="sort_checkbox">
+                                        <label for="<%=i%>" class="sort_checklabel">
+                                            <% let showname=sorters[i][1]==='Ready in minutes' ?'Preparation Time':sorters[i][1] %>
+                                                <%=showname%>
+                                        </label>
+                                    </div>
+                                    <div id="<%=sorters[i][0]%>-radio-div" class="radiodiv">
+                                        <div id="<%=sorters[i][0]%>-radio-div-asc">
+                                            <input type="radio" name="<%=sorters[i][0]%>-sort" value="ascending"
+                                                id="<%=i%>-ascending" class="sort_radio">
+                                            <label for="<%=i%>-ascending"
+                                                class="sort_radiolabel">Ascending</label>
+                                        </div>
+                                        <div id="<%=sorters[i][0]%>-radio-div-desc">
+                                            <input type="radio" name="<%=sorters[i][0]%>-sort" value="descending"
+                                                id="<%=i%>-descending" class="sort_radio">
+                                            <label for="<%=i%>-descending"
+                                                class="sort_radiolabel">Descending</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <input type="text" id="sortInputs" name="sortInputs" value="" hidden>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <% var string_dishNames=dishNames.join("||"); %>
+                <input type="text" name="dishType" value="<%=dishTypeName%>" hidden>
+                <input type="text" name="dishNames" value="<%=string_dishNames%>" hidden>
+
+        </form>
+        <div class="column right-column">
+            <div class="content">
+                <ol>
+                    <% dishNames.forEach((dishName)=> { %>
+                        <li>
+                            <%=dishName%>
+                        </li>
+                        <% }); %>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onunload = function () {
+            document.getElementById("filterForm").reset();
+        };
+
+        function showContent(num) {
+            //Reset all tabs and contents
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('selected-tab'));
+            tabs.forEach(tab => tab.classList.add('unselected-tab'));
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('selected-content'));
+            contents.forEach(content => content.classList.add('unselected-content'));
+
+            // Set the selected tab and content
+            const selectedTab = tabs[num - 1];
+            // console.log(selectedTab);
+            const selectedContent = document.querySelector(`.tab-contents #tab${num}`);
+            // console.log(selectedContent);
+
+            selectedTab.classList.remove('unselected-tab');
+            selectedTab.classList.add('selected-tab');
+
+            selectedContent.classList.remove('unselected-content');
+            selectedContent.classList.add('selected-content');
+        }
+
+        const ingredients = document.getElementById("list-of-ingredients").innerText.split(",");
+        // console.log(typeof ingredients);
+
+        function showSuggestions() {
+            // console.log("working?");
+            // console.log(ingredients);
+            var input = document.getElementById('ingredientInput');
+            const inputVal = input.value.toLowerCase();
+            const suggestionList = document.getElementById("suggestionList");
+            suggestionList.innerHTML = '';
+
+            const filteredSuggestions = ingredients.filter(
+                ingredient => ingredient.toLowerCase().includes(inputVal)
+            );
+
+            filteredSuggestions.forEach((suggestion) => {
+                const suggestionItem = document.createElement('li');
+                suggestionItem.classList.add('suggestionItem');
+                suggestionItem.textContent = suggestion;
+                suggestionItem.onclick = function () {
+                    input.value = suggestion;
+                    suggestionList.style.display = 'none';
+                };
+                suggestionList.appendChild(suggestionItem);
+            });
+
+            if (inputVal.length === 0) {
+                suggestionList.style.display = 'none';
+            }
+            else {
+                suggestionList.style.display = 'block';
+            }
+        }
+
+        function addIngredient() {
+            var input = document.getElementById("ingredientInput");
+            var ingredient = input.value;
+            var ingredientList = document.getElementById("ingredients");
+            console.log(ingredientList.value);
+
+            if (ingredient !== '') {
+                var list = document.getElementById("ingredientList");
+                var listItem = document.createElement('li');
+                listItem.classList.add("ingredientItem");
+
+                var nameSpan = document.createElement('span');
+                nameSpan.classList.add("ingredientName");
+                nameSpan.appendChild(document.createTextNode(ingredient));
+                listItem.appendChild(nameSpan);
+
+                var removeBtn = document.createElement('button');
+                removeBtn.classList.add('removeBtn');
+                removeBtn.appendChild(document.createTextNode('X'));
+                removeBtn.onclick = function () {
+                    listItem.remove();
+                    let ingredient_removed = listItem.firstChild.innerHTML;
+                    ingredientList.value = removeInput(ingredient_removed, ingredientList.value);
+                    console.log(ingredientList.value);
+                }
+                listItem.appendChild(removeBtn);
+
+                list.appendChild(listItem);
+                ingredientList.value = addInput(ingredient, ingredientList.value);
+
+                input.value = '';
+                showSuggestions();
+            }
+        }
+
+        const checkboxes = document.getElementsByClassName("checkbox");
+        const checkbox_divs = document.getElementsByClassName("checkbox_div");
+        const checkbox_labels = document.getElementsByClassName("checkbox_label");
+        var cuisineInputs = document.getElementById("cuisines");
+        var dietInputs = document.getElementById("diets");
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].addEventListener('change', function () {
+                if (this.checked) {
+                    checkbox_divs[i].style.backgroundColor = 'lightblue';
+                    checkbox_labels[i].style.fontWeight = 'bold';
+                    if (this.id.startsWith('cuisine')) {
+                        cuisineInputs.value = addInput(this.name, cuisineInputs.value);
+                    }
+                    if (this.id.startsWith('diet')) {
+                        dietInputs.value = addInput(this.name, dietInputs.value);
+                    }
+                }
+                else {
+                    checkbox_divs[i].style.backgroundColor = '';
+                    checkbox_labels[i].style.fontWeight = '';
+
+                    let item_removed = this.name;
+                    if (this.id.startsWith('cuisine')) {
+                        cuisineInputs.value = removeInput(item_removed, cuisineInputs.value);
+                    }
+                    if (this.id.startsWith('diet')) {
+                        dietInputs.value = removeInput(item_removed, dietInputs.value);
+                    }
+
+                }
+            });
+        }
+
+        const sort_checkboxes = document.getElementsByClassName("sort_checkbox");
+        const sort_radios = document.getElementsByClassName("radiodiv");
+        const sort_div = document.getElementsByClassName("sorter");
+        const sort_checklabels = document.getElementsByClassName("sort_checklabel");
+        var sortInputs = document.getElementById("sortInputs");
+
+        for (let i = 0; i < sort_checkboxes.length; i++) {
+            sort_checkboxes[i].addEventListener('change', function () {
+                console.log(sortInputs.value);
+                const this_radios = document.getElementsByName(this.name + "-sort");
+                const query = "#" + this.name + "-radio-div label";
+                const this_radiolabels = document.querySelectorAll(query);
+                if (this.checked) {
+                    sort_div[i].style.backgroundColor = 'lightblue';
+                    sort_checklabels[i].style.fontWeight = 'bold';
+                    sort_radios[i].style.display = 'flex';
+                    sort_radios[i].style.justifyContent = 'space-evenly';
+                    this_radios[0].required = true;
+                    for (let j = 0; j < 2; j++) {
+                        this_radios[j].addEventListener('change', function () {
+                            if (this.checked) {
+                                this_radiolabels[j].style.fontWeight = 'bold';
+                                this_radiolabels[1 - j].style.fontWeight = '';
+                                sortInputs.value = addInput(this.id,sortInputs.value);
+                                sortInputs.value = removeInput(this_radios[1-j].id,sortInputs.value);
+                            }
+                            else {
+                                this_radiolabels[j].style.fontWeight = '';
+                                sortInputs.value = removeInput(this_radios[j].id,sortInputs.value);
+                            }
+                        });
+                    }
+                }
+                else {
+                    sort_radios[i].style.display = 'none';
+                    sort_radios[i].style.justifyContent = '';
+                    sort_div[i].style.backgroundColor = ''
+                    sort_checklabels[i].style.fontWeight = '';
+                    this_radios[0].required = false;
+                    for (let i = 0; i < 2; i++) {
+                        this_radios[i].checked = false;
+                        this_radiolabels[i].style.fontWeight = '';
+                    }
+                    sortInputs.value = removeInput(this.id+"-ascending",sortInputs.value);
+                    sortInputs.value = removeInput(this.id+"-descending",sortInputs.value);
+                }
+            });
+        }
+
+        function addInput(item, value) {
+            if (value.length === 0) {
+                value += item;
+            }
+            else {
+                value += "||" + item;
+            }
+            return value;
+        }
+
+        function removeInput(item, value) {
+            let array = value.split("||");
+            let index = array.indexOf(item);
+            if (index !== -1) {
+                array.splice(index, 1);
+            }
+            return array.join("||");
+        }
+
+
+    </script>
+
+
+    <%- include("partials/footer.ejs") %>

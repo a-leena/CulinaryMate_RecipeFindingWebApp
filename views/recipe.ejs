@@ -1,0 +1,8 @@
+<%- include("partials/header.ejs") %>
+
+<% if (recDets.length == 0) {%>
+    <h1>Sorry recipe not found...</h1>
+<% } else {%>
+    <p><%= recDets %></p>
+<%}%>
+<%- include("partials/footer.ejs") %>
