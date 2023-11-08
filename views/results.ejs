@@ -7,7 +7,7 @@
     </div>
 
     <div class="container_results">
-        <form action="/filtered-results" method="post" id="filterForm">
+        <form action="/filtered-results?ingredients=&cuisines=&diets=&sorts=" method="post" id="filterForm">
             <div class="column left-column">
                 <h2>Filter by</h2>
                 <div class="content tab-container">
@@ -121,7 +121,7 @@
                                     </div>
                                 </div>
                                 <% } %>
-                                    <input type="text" id="sortInputs" name="sortInputs" value="" hidden>
+                                    <input type="text" id="sortInputs" name="sorts" value="" hidden>
                         </div>
 
                     </div>
@@ -137,10 +137,13 @@
         <div class="column right-column">
             <div class="content">
                 <ol>
-                    <% dishNames.forEach((dishName)=> { %>
-                        <li>
-                            <%=dishName%>
-                        </li>
+                    <% dishes.forEach((dish)=> { %>
+                        <form action="/show-recipe?dish=<%=dish['Dish Name']%>" method="post">
+                            <li>
+                                <button type="submit"><%=dish['Dish Name']%></button>
+                            </li>
+                            <input class="selectedDishInput" name="selectedDish" value="<%=JSON.stringify(dish)%>" hidden>
+                        </form>
                         <% }); %>
                 </ol>
             </div>
@@ -231,12 +234,14 @@
                     listItem.remove();
                     let ingredient_removed = listItem.firstChild.innerHTML;
                     ingredientList.value = removeInput(ingredient_removed, ingredientList.value);
+                    urlParams(["ingredients",ingredientList.value]);
                     console.log(ingredientList.value);
                 }
                 listItem.appendChild(removeBtn);
 
                 list.appendChild(listItem);
                 ingredientList.value = addInput(ingredient, ingredientList.value);
+                urlParams(["ingredients",ingredientList.value]);
 
                 input.value = '';
                 showSuggestions();
@@ -255,9 +260,11 @@
                     checkbox_labels[i].style.fontWeight = 'bold';
                     if (this.id.startsWith('cuisine')) {
                         cuisineInputs.value = addInput(this.name, cuisineInputs.value);
+                        urlParams(["cuisines",cuisineInputs.value]);
                     }
                     if (this.id.startsWith('diet')) {
                         dietInputs.value = addInput(this.name, dietInputs.value);
+                        urlParams(["diets",dietInputs.value]);
                     }
                 }
                 else {
@@ -267,9 +274,11 @@
                     let item_removed = this.name;
                     if (this.id.startsWith('cuisine')) {
                         cuisineInputs.value = removeInput(item_removed, cuisineInputs.value);
+                        urlParams(["cuisines",cuisineInputs.value]);
                     }
                     if (this.id.startsWith('diet')) {
                         dietInputs.value = removeInput(item_removed, dietInputs.value);
+                        urlParams(["diets",dietInputs.value]);
                     }
 
                 }
@@ -301,10 +310,12 @@
                                 this_radiolabels[1 - j].style.fontWeight = '';
                                 sortInputs.value = addInput(this.id,sortInputs.value);
                                 sortInputs.value = removeInput(this_radios[1-j].id,sortInputs.value);
+                                urlParams(["sorts",sortInputs.value]);
                             }
                             else {
                                 this_radiolabels[j].style.fontWeight = '';
                                 sortInputs.value = removeInput(this_radios[j].id,sortInputs.value);
+                                urlParams(["sorts",sortInputs.value]);
                             }
                         });
                     }
@@ -321,6 +332,7 @@
                     }
                     sortInputs.value = removeInput(this.id+"-ascending",sortInputs.value);
                     sortInputs.value = removeInput(this.id+"-descending",sortInputs.value);
+                    urlParams(["sorts",sortInputs.value]);
                 }
             });
         }
@@ -344,6 +356,29 @@
             return array.join("||");
         }
 
+        function urlParams(param) {
+            const sorters = ['extra_ingredients','preparation_time','calories','sugar','cholesterol','glycemic_index','glycemic_load','nutrition_score','percentage_protein','percentage_fat','percentage_carbohydrates'];
+            var url = document.getElementById("filterForm");
+            console.log(url.action);
+            var params = url.action.split("?")[1].split("&");
+            console.log(params);
+            const index = url.action.indexOf(param[0]) + (param[0]+"=").length;
+            const old_url = url.action;
+            var paramVal = "";
+            if (param[0]==='sorts') {
+                param[1].split("||").forEach((sort)=>{
+                    paramVal += sorters[sort.split("-")[0]] + "-" + sort.split("-")[1] + ",";
+                });
+            }
+            else {
+                paramVal = param[1].split("||").join(",");
+            }
+            url.action = old_url.slice(0,index) + paramVal;
+            if (old_url.indexOf("&",index) !== -1) {
+                url.action += old_url.slice(old_url.indexOf("&",index),old_url.length);
+            }
+            console.log(url.action);
+        }
 
     </script>
 

@@ -76,10 +76,19 @@ function getImages(foldername) {
 
 const homeImages = getImages("dish_images");
 // const recipeImages = getImages("recipes");
-
+var dishNames = [];
+try {
+    const recipes = await Recipe.find({}, { 'Dish Name': 1, _id: 0 });
+    recipes.forEach((recipe)=>{
+        dishNames.push(recipe['Dish Name']);
+    });
+}
+catch(error){
+    console.log(error);
+}
 app.get("/", (req, res) => {
     //console.log(homeImages);
-    res.render("home.ejs", { imageList: homeImages });
+    res.render("home.ejs", { imageList: homeImages, dishNames: dishNames});
 });
 
 const typesNames = ["Breakfast", "Starters & Appetizers", "Main Course", "Side-Dish", "Soup", "Salad", "Desserts", "Beverage", "Bread", "Fingerfood", "Sauce & Condiments", "Seasoning"];
@@ -129,7 +138,8 @@ app.get("/find-recipes", async (req, res) => {
         //console.log(recipeImages);
         res.render("find.ejs", {
             nameCountList: typesCounts,
-            imageDirectory: "/Images/recipes"
+            imageDirectory: "/Images/recipes",
+            dishNames:dishNames
         });
     }
     catch (error) {
@@ -168,7 +178,7 @@ app.post("/results", async (req, res) => {
         ["sauce", "condiment", "dip", "spread"],
         ["seasoning", "marinade"]
     ]
-    const typesMapping = {};
+    var typesMapping = {};
     for (let i = 0; i < typesNames.length; i++) {
         typesMapping[typesNames[i]] = dbTypesNames[i];
     }
@@ -176,16 +186,19 @@ app.post("/results", async (req, res) => {
     console.log(dishTypeName);
     try {
         const recipes = await Recipe.find();
-        const dishNames = [];
+        var dishNames = [];
+        var dishes = [];
         const allLists = getList(recipes);
         recipes.forEach((recipe) => {
             if (recipe['Dish Type'].some(item => typesMapping[dishTypeName].includes(item))) {
                 dishNames.push(recipe['Dish Name']);
+                dishes.push(recipe);
             }
         });
         res.render("results.ejs", {
             dishTypeName: dishTypeName,
             dishNames: dishNames,
+            dishes: dishes,
             ingredientList: allLists.ingredientList,
             cuisineList: allLists.cuisineList,
             dietList: allLists.dietList,
@@ -207,7 +220,7 @@ app.post("/filtered-results", async (req, res) => {
     console.log(cuisine_required);
     const diet_required = req.body.diets.length === 0 ? [] : req.body.diets.split("||");
     console.log(diet_required);
-    const sortInputs = req.body.sortInputs.length === 0 ? [] : req.body.sortInputs.split("||");
+    const sortInputs = req.body.sorts.length === 0 ? [] : req.body.sorts.split("||");
 
     const dishTypeName = req.body.dishType;
     const dishNames = req.body.dishNames.split("||");
@@ -345,13 +358,14 @@ app.post("/filtered-results", async (req, res) => {
             console.log(i + " " + recipe['Dish Name']);
         });
 
-        const filteredDishNames = [];
+        var filteredDishNames = [];
         filteredRecipes.forEach((recipe) => {
             filteredDishNames.push(recipe['Dish Name']);
         });
         res.render("results.ejs", {
             dishTypeName: dishTypeName,
             dishNames: filteredDishNames,
+            dishes: filteredRecipes,
             ingredientList: allLists.ingredientList,
             cuisineList: allLists.cuisineList,
             dietList: allLists.dietList,
@@ -443,38 +457,42 @@ app.post("/filtered-results", async (req, res) => {
 });
 
 app.post("/show-recipe", async (req, res) => {
-    if (req.body.recipeName.length === 0) {
-        const backURL = req.header('Referer');
-        console.log(backURL);
-        res.redirect(backURL);
+    console.log(typeof req.body.selectedDish);
+    console.log(req.body.selectedDish)
+    var dish = [];
+    if (req.body.selectedDish) {
+        dish.push(JSON.parse(req.body.selectedDish));
     }
-    else {
-        try {
-            const recipes = await Recipe.find();
-            var recDets = "";
-            recipes.forEach((recipe) => {
-                if (req.body.recipeName.toLowerCase() === recipe['Dish Name'].toLowerCase()) {
-                    recDets = recipe;
-                }
-            });
-            res.render("recipe.ejs", { recDets: recDets });
+    else if (req.body.recipeName) {
+        if (req.body.recipeName.length === 0) {
+            const backURL = req.header('Referer');
+            console.log(backURL);
+            res.redirect(backURL);
         }
-        catch (error) {
-            console.log(error);
+        else {
+            try {
+                const recipes = await Recipe.find();
+                recipes.forEach((recipe) => {
+                    if (req.body.recipeName.toLowerCase() === recipe['Dish Name'].toLowerCase()) {
+                        dish.push(recipe);
+                    }
+                });
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
     }
+    res.render("recipe.ejs", { dishSearched: dish[0], dishNames:dishNames});
+
 });
 
 app.get("/add-recipes", async (req, res) => {
-    res.render("add.ejs");
+    res.render("add.ejs",{dishNames:dishNames});
 });
 
 app.get("/give-feedback", async (req, res) => {
-    res.render("feedback.ejs");
-});
-
-app.get("/view-history", async (req, res) => {
-    res.render("history.ejs");
+    res.render("feedback.ejs",{dishNames:dishNames});
 });
 
 app.listen(port, () => {
@@ -483,9 +501,9 @@ app.listen(port, () => {
 
 
 function getList(recipes) {
-    const ingredientList = [];
-    const cuisineList = [];
-    const dietList = [];
+    var ingredientList = [];
+    var cuisineList = [];
+    var dietList = [];
     recipes.forEach((recipe) => {
         recipe.Ingredients.forEach((ingredientInfo) => {
             const ingredient = ingredientInfo.Name;

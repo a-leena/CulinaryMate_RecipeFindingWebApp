@@ -19,14 +19,22 @@
             <div id="logo_div">
                 <a href="/"><img src="/Images/Logo.jpg"></a>
             </div>
-            <form action="/show-recipe" method="post" id="search_div">
-                <div id="search_box_div">
-                    <input type="text" placeholder="Type recipe name" name="recipeName" id="search_box">
+            <form action="/show-recipe?search=" method="post" id="search_form">
+                <div id="search_div">
+                    <div id="search_box_div">
+                        <input type="text" placeholder="Type recipe name" name="recipeName" id="search_box"
+                            oninput="showSuggestions()">
+                    </div>
+                    <div id="search_button_div">
+                        <button type="submit" id="search_button">&#128269;</button>
+                    </div>
                 </div>
-                <div id="search_button_div">
-                    <button type="submit" id="search_button">&#128269;</button>
+                <div>
+                    <ul id="suggestionList"></ul>
                 </div>
-
+                <p hidden id="list-of-recipe-names">
+                    <%= dishNames.join("||") %>
+                </p>
             </form>
             <div id="nav_div">
                 <ul id="navs">
@@ -39,11 +47,48 @@
                     <a href="/give-feedback">
                         <li>FEEDBACK</li>
                     </a>
-                    <a href="/view-history">
-                        <li>HISTORY</li>
-                    </a>
                 </ul>
             </div>
+
         </nav>
+
+        <script>
+            const dishnames = document.getElementById("list-of-recipe-names").innerText.split("||")
+            function showSuggestions() {
+                // console.log("working?");
+                // console.log(ingredients);
+                var input = document.getElementById('search_box');
+                const inputVal = input.value.toLowerCase();
+                const suggestionList = document.getElementById("suggestionList");
+                suggestionList.innerHTML = '';
+
+                const filteredSuggestions = dishnames.filter(
+                    dishname => dishname.toLowerCase().includes(inputVal)
+                );
+
+                filteredSuggestions.forEach((suggestion) => {
+                    const suggestionItem = document.createElement('li');
+                    suggestionItem.classList.add('suggestionItem');
+                    suggestionItem.textContent = suggestion;
+                    suggestionItem.onclick = function () {
+                        input.value = suggestion;
+                        suggestionList.style.display = 'none';
+                        const searchForm = document.getElementById("search_form");
+                        searchForm.action = searchForm.action.slice(0, searchForm.action.indexOf("=") + 1) + input.value;
+                    };
+                    suggestionList.appendChild(suggestionItem);
+                });
+
+                if (inputVal.length === 0) {
+                    suggestionList.style.display = 'none';
+                }
+                else {
+                    suggestionList.style.display = 'block';
+                }
+
+                const searchForm = document.getElementById("search_form");
+                searchForm.action = searchForm.action.slice(0, searchForm.action.indexOf("=") + 1) + input.value;
+            }
+        </script>
     </header>
     <main>

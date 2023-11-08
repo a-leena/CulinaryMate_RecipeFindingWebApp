@@ -5,7 +5,7 @@
     </div>
     <div class="container_dishtypes">
         <% nameCountList.forEach((nameCount)=> { %>
-            <form action="/results" method="post">
+            <form action="/results?dishType=<%=nameCount[0]%>" method="post">
                 <input type="text" name="dishTypeName" value="<%=nameCount[0]%>" class="dishTypeName" hidden>
                 <button class="card" type="submit">
                     <img class="dish-type-images" src="<%=imageDirectory%>/<%=nameCount[0]%>.jpg"
