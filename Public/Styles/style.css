@@ -30,17 +30,11 @@ nav {
     height: 128px;
 }
 
-header form #suggestionList {
-    margin-left:50px;
-    width:30%;
-    background-color: white;
-}
-
 #search_div {
     position: absolute;
     top: 46.5px;
-    left: 200px;
-    width: 32.5%;
+    left: 185px;
+    width: 35%;
     background-color: white;
     display: flex;
     justify-content: space-between;
@@ -91,6 +85,18 @@ header form #suggestionList {
     background-color: transparent;
     cursor: pointer;
     font-size: 20px;
+}
+
+#suggestionDiv {
+    margin-top:30px;
+    margin-left:30px;
+    padding:20px;
+    width:32%;
+}
+
+#suggestionListMain { 
+    width:32%;
+    background-color: white;
 }
 
 #nav_div {
@@ -382,7 +388,7 @@ main {
     padding:10px;
 }
 
-#filterBtn {
+#filterBtn{
     display:block;
     position: relative;
     top:5%;
@@ -508,16 +514,16 @@ main {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-#suggestionList {
+.suggestionList {
     display: none;
-    position: relative;
+    position: absolute;
     z-index: 1;
     width: 85%;
     background-color: #f1f5f6;
     list-style-type: none;
     padding: 0;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    height:400px;
+    height:200px;
     overflow-y:scroll;
 }
 
@@ -573,49 +579,245 @@ main {
     font-weight:bold;
 }
 
-.recipe_info {
-    padding:50px;
-    background-color:white;
-}
-
-.recipe_info .left-column {
-    width: 47%;
-}
-
-.recipe_info .right-column {
-    width: 46.5%;
-}
-
-.info {
+.recipe-page {
     width:100%;
+    display: table;
+}
+
+.recipe_info {
+    width: 90%;
+    padding:50px;
+    background-color:#f1f5f6;
+    display:flex;
+    flex-direction: column;
+}
+
+.info, .ingredients-steps {
+    border-bottom: 5px solid #fcce0b;
+    background-color: white;
+    height: max-content;
+    /* width: 99.5%; */
 }
 
 .info .column {
-    background-color:#fcce0b;
+    background-color:transparent;
     height: fit-content;
-    padding:20px 0 20px 25px;
+    padding: 20px 0px 20px 25px;
 }
 
-.ingredients-steps .column {
-    background-color: white;
-    width:46.5%;
+.info .left-column, .info .right-column {
+    width:47.494%;
+}
+
+.info .right-column {
+    padding-right:7px;
+}
+
+.info p, .nutrition-container p {
+    font-weight: bold;
+    color: #d84012;
+}
+
+.from-db {
+    font-weight: normal;
+    font-size:17px;
+    padding-left:10px;
+    color:#442a00;
+}
+
+/* .info .left-column,.ingredients-steps .left-column {
+    border-right: 1px solid lightgray;
+} */
+
+
+.ingredients-steps .column, .nutrition-container .column {
+    background-color:transparent;
+    width:47.5%;
     height: fit-content;
-    padding:20px 20px;
+    padding: 20px 0px 20px 25px;
 }
 
 .ingredients-steps .right-column {
-    overflow-x:scroll;
-    width:42.5%;
+    width:44%;
 }
 
 .ingredients-steps .column ul, .ingredients-steps .column ol {
     padding-left:15px;
+    padding-right:0;
 }
 .ingredients-steps .column li {
-    padding-bottom:10px;
+    padding-left:10px;
+    padding-bottom:10px; 
 }
 
-.from-db {
-    font-size:16px;
-    padding-left:10px;
+.recipe-page h3 {
+    color:#d84012;
+    font-size: 20px;
+}
+
+.nutrition-container {
+    background-color: white;
+    height: max-content;
+}
+
+.extra-nutrients {
+    display:none;
+    padding:25px;
+    width:95%;
+}
+
+.extra-nutrients-card {
+    background-color:lightblue;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nutrients-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+.extra-nutri {
+    color:#d84012;
+    font-weight: 525;
+}
+
+#showMoreBtn {
+    display:block;
+    margin-top:25px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color:lightskyblue;
+    color: #442a00;
+    font-weight: bolder;
+    font-size: 15px;
+    height: 35px;
+    border: none;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+#showMoreBtn:active {
+    background-color:lightblue;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add a slight shadow when clicked */
+}
+
+.instruction {
+    color:dimgray;
+}
+
+.form-container {
+    margin:20px;
+    width: 89%;
+    background-color:white;
+    padding: 50px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height:max-content;
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label, .group-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color:#442a00;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.checkboxes {
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.checkbox-group label {
+    margin-bottom: 10px;
+}
+
+#ingredientContainer,
+#instructionContainer {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+#ingredientContainer .form-group,
+#instructionContainer .form-group {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 10px;
+}
+
+#ingredientContainer .form-group input,
+#instructionContainer .form-group input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+#addIngredient_btn,
+#addInstruction_btn {
+    display: block;
+    padding: 8px;
+    color:#442a00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom:30px;
+    background-color: lightblue;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#addIngredient_btn:hover,
+#addInstruction_btn:hover {
+    background-color:lightskyblue;
+}
+
+.numeric_info, .nutrition {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.required {
+    color:red;
+    font-weight:bolder;
+    font-size:20px;
+}
+
+.submit-button {
+    display: block;
+    width: 100px;
+    padding: 10px;
+    background-color:#fcce0b;
+    color:#442a00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.submit-button:hover {
+    background-color: lightskyblue;
+}
+
+.feedback {
+    margin:20px;
 }

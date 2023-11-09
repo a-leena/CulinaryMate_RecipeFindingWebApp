@@ -1,96 +1,179 @@
 <%- include("partials/header.ejs") %>
-    <% if (dishSearched===undefined) {%>
+    <% if (dishSearched===undefined) { %>
         <h1>Sorry recipe not found...</h1>
-        <% } else {%>
-            <div class="page-heading">
-                <h1>
-                    <%=dishSearched['Dish Name']%>
-                </h1>
-            </div>
-            <div class="recipe_info">
-                <div class="info">
-                    <div class="column left-column">
-                        <p>Preparation Time: <span class="from-db"><%=dishSearched['Ready in minutes']%> minutes</span></p>
-                        <p>Servings: <span class="from-db"><%=dishSearched.Servings%></span></p>
-                        <p>Weight per serving: <span class="from-db"><%=dishSearched['Weight per serving in grams']%> grams</span></p>
-                    </div>
-                    <div class="column right-column">
-                        <p>Dish Type: <span class="from-db">
-                            <% function getType(dishType) {
-                                var type = "";
-                                const dbTypesNames = [
-                                    [["breakfast", "brunch", "morning meal"],"Breakfast"],
-                                    [["starter", "antipasto", "antipasti", "snack", "appetizer", "hor d'oeuvre"],"Starters & Appetizers"],
-                                    [["main course", "lunch", "main dish", "dinner"],"Main Course"],
-                                    [["side dish"],"Side-Dish"],
-                                    [["soup"],"Soup"],
-                                    [["salad"],"Salad"],
-                                    [["dessert"],"Desserts"],
-                                    [["beverage", "drink"],"Beverage"],
-                                    [["bread"],"Bread"],
-                                    [["fingerfood"],"Fingerfood"],
-                                    [["sauce", "condiment", "dip", "spread"],"Sauce & Condiments"],
-                                    [["seasoning", "marinade"],"Seasoning"]
-                                ];
-                                dbTypesNames.forEach((typeSet)=>{
-                                    if (typeSet[0].includes(dishType)) {
-                                        type = typeSet[1];
+        <% } else { %>
+            <div class="recipe-page">
+                <div class="page-heading">
+                    <h1>
+                        <%=dishSearched['Dish Name'][0].toUpperCase() + dishSearched['Dish Name'].slice(1,dishSearched['Dish Name'].length).toLowerCase()%>
+                    </h1>
+                </div>
+
+                <div class="recipe_info">
+                    <div class="info">
+                        <div class="column left-column">
+                            <p>Preparation Time: <span class="from-db">
+                                    <%=dishSearched['Ready in minutes']%> minutes
+                                </span>
+                            </p>
+                            <p>Servings: <span class="from-db">
+                                    <%=dishSearched.Servings%>
+                                </span>
+                            </p>
+                            <p>Weight per serving: <span class="from-db">
+                                    <%=dishSearched['Weight per serving in grams']%> grams
+                                </span>
+                            </p>
+                        </div>
+                        <div class="column right-column">
+                            <p>Dish Type: <span class="from-db">
+                                <% function getType(dishType) { 
+                                    var type="" ; const dbTypesNames=[[["breakfast", "brunch" , "morning meal" ],"Breakfast"],
+                                        [["starter", "antipasto" , "antipasti" , "snack" , "appetizer" , "hor d'oeuvre"],"Starters & Appetizers"],
+                                        [["main course", "lunch" , "main dish" , "dinner"],"Main Course"],
+                                        [["side dish"],"Side-Dish"],
+                                        [["soup"],"Soup"],
+                                        [["salad"],"Salad"],
+                                        [["dessert"],"Desserts"],
+                                        [["beverage", "drink"],"Beverage"],
+                                        [["bread"],"Bread"],
+                                        [["fingerfood"],"Fingerfood"],
+                                        [["sauce","condiment","dip","spread"],"Sauce & Condiments"],
+                                        [["seasoning","marinade" ],"Seasoning"]]; 
+                                        dbTypesNames.forEach((typeSet)=>{
+                                            if (typeSet[0].includes(dishType)) {
+                                                type = typeSet[1];
+                                            }
+                                        });
+                                        return type;
                                     }
-                                });
-                                return type;
-                            }
-                            var types = [];
-                            dishSearched['Dish Type'].forEach((dishType)=>{
-                                if (!types.includes(getType(dishType))) {types.push(getType(dishType));}
-                            }); %>
+                                    var types = [];
+                                    dishSearched['Dish Type'].forEach((dishType)=>{
+                                        if (!types.includes(getType(dishType))) {
+                                            types.push(getType(dishType));
+                                        }
+                                    }); %>
                                     <%= types.join(", ") %>
-                        </span></p>
-                        <p>Diet Type: <span class="from-db">
-                        <% if (dishSearched['Diet Type'].length !== 0) { %>   
-                                <% var diets = [];
-                                dishSearched['Diet Type'].forEach((dietType)=>{
-                                    diets.push(dietType[0].toUpperCase() + dietType.slice(1,dietType.length));
-                               });%>
-                               <%= diets.join(", ") %>                                   
-                        <% } else {%>
-                            Unspecified
-                        <% } %>
-                        </span></p>
-                        <p>Cuisine: <span class="from-db">
-                        <% if (dishSearched.Cuisine.length !== 0) { %> 
-                            <%= dishSearched.Cuisine.join(", ") %>
-                        <% } else { %>
-                            Unspecified
-                        <% } %>
-                        </span></p>
-                </div>
-                <div class="nutrition-container">
-                </div>
-                
-                <div class="ingredients-steps">
-                    <div class="column left-column">
-                        <h3>Ingredients:</h3>
-                        <ul>
-                            <% var ingredients = [];
-                                dishSearched.Ingredients.forEach((ingredient)=> {
+                                </span>
+                            </p>
+                            <p>Diet Type: <span class=" from-db">
+                                <% if (dishSearched['Diet Type'].length !==0) { %>
+                                    <% var diets=[]; dishSearched['Diet Type'].forEach((dietType)=>{
+                                        diets.push(dietType[0].toUpperCase() + dietType.slice(1,dietType.length));
+                                    });%>
+                                    <%= diets.join(", ") %>                                   
+                                <% } else {%>
+                                    Unspecified
+                                <% } %>
+                                </span>
+                            </p>
+                            <p>Cuisine: <span class=" from-db">
+                                <% if (dishSearched.Cuisine.length !==0) { %>
+                                    <%= dishSearched.Cuisine.join(", ") %>
+                                <% } else { %>
+                                    Unspecified
+                                <% } %>
+                                </span>
+                            </p>
+                        </div>
+                    </div>     
+                    <div class="ingredients-steps">
+                        <div class="column left-column">
+                            <h3>Ingredients:</h3>
+                            <ul>
+                                <% var ingredients=[]; dishSearched.Ingredients.forEach((ingredient)=> {
                                     if (!ingredients.includes(ingredient)) {
                                         ingredients.push(ingredient);
                                     }
                                 });%>
-                            <% ingredients.forEach((ingredient)=> { %>
-                                <li><%=ingredient.Amount%> <%=ingredient.Unit%> <%= (ingredient.Name)[0].toUpperCase()+ingredient.Name.slice(1,ingredient.Name.length)%></li>
-                            <% }); %>
-                        </ul>
+                                <% ingredients.forEach((ingredient)=> { %>
+                                    <li>
+                                        <%=ingredient.Amount%> <%=ingredient.Unit%> <%=(ingredient.Name)[0].toUpperCase()+ingredient.Name.slice(1,ingredient.Name.length)%>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                        <div class="column right-column">
+                            <h3>Instructions:</h3>
+                            <ol>
+                                <% dishSearched.Instructions.forEach((instruction)=>{ %>
+                                    <!-- <p><%# instruction.instruction %></p> -->
+                                    <li>
+                                        <% instruction.instruction.split(".").forEach((step)=>{ 
+                                            if (step.length!==0) { 
+                                                step=step.trim();%>
+                                                <%=step.slice(0,1).toUpperCase() + step.slice(1,step.length).toLowerCase()%>.  
+                                        <% }}); %> 
+                                    </li>
+                                <% }); %>
+                            </ol>
+                        </div>
                     </div>
-                    <div class="column right-column">
-                        <h3>Instructions:</h3>
-                        <ol>
-                            <% dishSearched.Instructions.forEach((instruction)=>{ %>
-                                <li><%=instruction.instruction%></li>
-                            <% }); %>
-                        </ol>
+                    <div class=" nutrition-container">
+                        <div class="column left-column">
+                            <p>Protein: <span class="from-db">
+                                <%= parseFloat(dishSearched['Caloric Breakdown']['Percentage Protein']).toFixed(2) %> %
+                                </span>
+                            </p>
+                            <p>Fat: <span class="from-db">
+                                <%= parseFloat(dishSearched['Caloric Breakdown']['Percentage Fat']).toFixed(2) %> %
+                                </span>
+                            </p>
+                            <p>Carbohydrates: <span class="from-db">
+                                <%= parseFloat(dishSearched['Caloric Breakdown']['Percentage Carbohydrates']).toFixed(2) %> %
+                                </span>
+                            </p>
+                            
+                            <button type="button" id="showMoreBtn" onclick="toggleNutrients()">Show More</button>
+                        </div>
+                        <div class="column right-column">
+                            <p>Glycemic Index: <span class="from-db">
+                                <%= parseFloat(dishSearched.Properties[0].Amount).toFixed(2) %>
+                                </span>
+                            </p>
+                            <p>Glycemic Load: <span class="from-db">
+                                <%= parseFloat(dishSearched.Properties[1].Amount).toFixed(2) %>
+                                </span>
+                            </p>
+                            <p>Nutrition Score: <span class="from-db">
+                                <%= parseFloat(dishSearched.Properties[2].Amount).toFixed(2) %> %
+                                </span>
+                            </p>
+                        </div>
                     </div>
+                    <div id="extra-nutrients" class="extra-nutrients" style="display:none">
+                        <div class="extra-nutrients-card">
+                            <h3>More Nutritional Values</h3>
+                            <ul class="nutrients-grid">
+                                <% dishSearched.Nutrients.forEach((nutrient)=>{ %>
+                                    <li><span class="extra-nutri"><%=nutrient.Name%>: </span><%= parseFloat(nutrient.Amount).toFixed(2)%> <%=nutrient.Unit%></li>
+                                <% }); %>
+                                <% dishSearched.Flavonoids.forEach((flavonoid)=>{ 
+                                    if(flavonoid.Amount !== 0){ %>
+                                    <li><span class="extra-nutri"><%=flavonoid.Name%>: </span><%= parseFloat(flavonoid.Amount).toFixed(2)%> <%=flavonoid.Unit%></li>
+                                <% }}); %>
+                            </ul> 
+                        </div>
+                    </div>
+                    <script>
+                        function toggleNutrients() {
+                            let moreText = "Show More";
+                            let lessText = "Show Less";
+                            let btn = document.getElementById("showMoreBtn");
+                            let nutrientsDiv = document.getElementById("extra-nutrients");
+
+                            if (nutrientsDiv.style.display === "none") {
+                                nutrientsDiv.style.display = "block";
+                                btn.textContent = lessText;
+                            } else {
+                                nutrientsDiv.style.display = "none";
+                                btn.textContent = moreText;
+                            }
+                        }
+                    </script>
                 </div>
             </div>
-            <%}%>
-                <%- include("partials/footer.ejs") %>
+
+        <% } %>
+
+<%- include("partials/footer.ejs") %>

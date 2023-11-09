@@ -23,17 +23,17 @@
                 <div id="search_div">
                     <div id="search_box_div">
                         <input type="text" placeholder="Type recipe name" name="recipeName" id="search_box"
-                            oninput="showSuggestions()">
+                            oninput="showSuggestionsMain()">
                     </div>
                     <div id="search_button_div">
                         <button type="submit" id="search_button">&#128269;</button>
                     </div>
                 </div>
-                <div>
-                    <ul id="suggestionList"></ul>
+                <div id="suggestionDiv">
+                    <ul class="suggestionList" id="suggestionListMain"></ul>
                 </div>
                 <p hidden id="list-of-recipe-names">
-                    <%= dishNames.join("||") %>
+                    <%= searchRecipes.join("||") %>
                 </p>
             </form>
             <div id="nav_div">
@@ -44,32 +44,35 @@
                     <a href="/add-recipes">
                         <li>ADD RECIPES</li>
                     </a>
-                    <a href="/give-feedback">
+                    <!-- <a href="/give-feedback">
                         <li>FEEDBACK</li>
-                    </a>
+                    </a> -->
                 </ul>
             </div>
 
         </nav>
 
         <script>
-            const dishnames = document.getElementById("list-of-recipe-names").innerText.split("||")
-            function showSuggestions() {
-                // console.log("working?");
-                // console.log(ingredients);
+            const recipeNames = document.getElementById("list-of-recipe-names").innerText.split("||")
+            function showSuggestionsMain() {
                 var input = document.getElementById('search_box');
                 const inputVal = input.value.toLowerCase();
-                const suggestionList = document.getElementById("suggestionList");
+                const suggestionList = document.getElementById("suggestionListMain");
                 suggestionList.innerHTML = '';
 
-                const filteredSuggestions = dishnames.filter(
-                    dishname => dishname.toLowerCase().includes(inputVal)
+                var filteredSuggestions = recipeNames.filter(
+                    recipeName => recipeName.toLowerCase().includes(inputVal)
                 );
+
+                filteredSuggestions.forEach((suggestion)=>{
+                    suggestion = suggestion.trim();
+                    suggestion = suggestion[0].toUpperCase() + suggestion.slice(1,suggestion.length).toLowerCase();
+                });
 
                 filteredSuggestions.forEach((suggestion) => {
                     const suggestionItem = document.createElement('li');
                     suggestionItem.classList.add('suggestionItem');
-                    suggestionItem.textContent = suggestion;
+                    suggestionItem.textContent = suggestion.trim();
                     suggestionItem.onclick = function () {
                         input.value = suggestion;
                         suggestionList.style.display = 'none';

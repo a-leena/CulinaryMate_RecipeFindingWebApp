@@ -27,6 +27,7 @@
                         <div id="tab1" class="tab-content selected-content">
                             <!-- Give Ingredients -->
                             <h3 class="filter-title">What ingredients should the recipes include?</h3>
+                            <p class="instruction">Enter the ingredient name one at a time</p>
                             <p hidden id="list-of-ingredients">
                                 <%= ingredientList %>
                             </p>
@@ -34,12 +35,11 @@
                                 <div id="addIngredient">
                                     <input type="text" id="ingredientInput" class="ingredientInput"
                                         oninput="showSuggestions()"
-                                        placeholder="Enter the ingredient name one at a time">
+                                        placeholder="Ingredient Name">
                                     <button type="button" id="addIngredientBtn" onclick="addIngredient()">+</button>
                                 </div>
-                                <ul id="suggestionList"></ul>
+                                <ul class="suggestionList" id="suggestionListIngredients"></ul>
                             </div>
-
                             <ul id="ingredientList"></ul>
                             <input name="ingredients" value="" hidden id="ingredients">
 
@@ -94,6 +94,7 @@
 
                         <div id="tab4" class="tab-content unselected-content">
                             <h3 class="filter-title">How do you want to sort your recipes?</h3>
+                            <p class="instruction">Leave all unselected if you don't want to sort</p>
                             <!-- Give Sorting options -->
                             <% for (let i=0; i<sorters.length; i++) { %>
                                 <div id="<%=sorters[i][0]%>-box" class="sorter">
@@ -140,7 +141,7 @@
                     <% dishes.forEach((dish)=> { %>
                         <form action="/show-recipe?dish=<%=dish['Dish Name']%>" method="post">
                             <li>
-                                <button type="submit"><%=dish['Dish Name']%></button>
+                                <button type="submit"><%= dish['Dish Name'][0].toUpperCase() + dish['Dish Name'].slice(1,dish['Dish Name'].length).toLowerCase()%></button>
                             </li>
                             <input class="selectedDishInput" name="selectedDish" value="<%=JSON.stringify(dish)%>" hidden>
                         </form>
@@ -185,7 +186,7 @@
             // console.log(ingredients);
             var input = document.getElementById('ingredientInput');
             const inputVal = input.value.toLowerCase();
-            const suggestionList = document.getElementById("suggestionList");
+            const suggestionList = document.getElementById("suggestionListIngredients");
             suggestionList.innerHTML = '';
 
             const filteredSuggestions = ingredients.filter(

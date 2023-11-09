@@ -1,5 +1,159 @@
 <%- include("partials/header.ejs") %>
 
-<h1>This is add recipes.</h1>
+    <div class="page-heading">
+        <h1>
+            Add New Recipe
+        </h1>
+    </div>
+    <% if(locals.feedback) { %>
+    <div class="feedback">
+        <h2><span class="webname"><%= feedback %></span></h2>
+    </div>
+    <% } %>
+    <div class="form-container">
+        <form action="/submit-recipe" method="post" id="add-recipe-form">
+            <div class="form-group">
+                <label for="dishName"><span class="required">*</span> Dish Name:</label>
+                <input type="text" id="dishName" name="dishName" required>
+            </div>
+            <div class="numeric_info">
+                <div class="form-group">
+                    <label for="preparationTime"><span class="required">*</span> Preparation Time (minutes):</label>
+                    <input type="number" id="preparationTime" name="preparationTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="servings"><span class="required">*</span> Number of Servings:</label>
+                    <input type="number" id="servings" name="servings" required>
+                </div>
+                <div class="form-group">
+                    <label for="weightPerServing"><span class="required">*</span> Weight per Serving (grams):</label>
+                    <input type="number" id="weightPerServing" name="weightPerServing" required>
+                </div>
+            </div>
+            <label class="group-label"><span class="required">*</span> Dish Type:</label>
+            <div class="checkboxes dish">
+                <% dishTypes.forEach((dishType)=>{ %>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="<%=dishType.toLowerCase().split(' ').join('-')%>" name="dishType"
+                            value="<%=dishType%>">
+                        <label for="<%=dishType.toLowerCase().split(' ').join('-')%>">
+                            <%=dishType%>
+                        </label>
+                    </div>
+                    <% }); %>
+            </div>
+            <label class="group-label">Diet Type:</label>
+            <div class="checkboxes diet">
+                <% dietTypes.forEach((dietType)=>{ %>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="<%=dietType.toLowerCase().split(' ').join('-')%>" name="dietType"
+                            value="<%=dietType%>">
+                        <label for="<%=dietType.toLowerCase().split(' ').join('-')%>">
+                            <%=dietType%>
+                        </label>
+                    </div>
+                    <% }); %>
+            </div>
+            <label class="group-label">Cuisine:</label>
+            <div class="checkboxes cuisine">
+                <% cuisines.forEach((cuisine)=>{ %>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="<%=cuisine.toLowerCase().split(' ').join('-')%>" name="cuisine"
+                            value="<%=cuisine%>">
+                        <label for="<%=cuisine.toLowerCase().split(' ').join('-')%>">
+                            <%=cuisine%>
+                        </label>
+                    </div>
+                    <% }); %>
+            </div>
+            <div id="ingredientContainer">
+                <label class="group-label"><span class="required">*</span> Ingredients: </label>
+                <div class="form-group">
+                    <input type="text" name="ingredientName" placeholder="Ingredient Name" required>
+                    <input type="number" name="ingredientAmount" placeholder="Amount" required>
+                    <input type="text" name="ingredientUnit" placeholder="Unit" required>
+                </div>
+            </div>
+            <button id="addIngredient_btn" type="button">Add Ingredient</button>
+            <div id="instructionContainer">
+                <label class="group-label"><span class="required">*</span> Instructions: </label>
+                    <div class="form-group">
+                        <input type="number" name="stepNumber" placeholder="Step Number" required>
+                        <input type="text" name="instruction" placeholder="Instruction" required>
+                    </div>
+            </div>
+            <button id="addInstruction_btn" type="button">Add Instruction</button>
+            <div class="nutrition">
+                <div class="form-group">
+                    <label for="protein">Percentage Protein:</label>
+                    <input type="number" id="protein" name="percentage-protein">
+                </div>
+                <div class="form-group">
+                    <label for="fat">Percentage Fat:</label>
+                    <input type="number" id="fat" name="percentage-fat">
+                </div>
+                <div class="form-group">
+                    <label for="carbs">Percentage Carbohydrates:</label>
+                    <input type="number" id="carbs" name="percentage-carbohydrates">
+                </div>
+                <div class="form-group">
+                    <label for="glycemic-index">Glycemic Index:</label>
+                    <input type="number" id="glycemic-index" name="glycemic-index">
+                </div>
+                <div class="form-group">
+                    <label for="glycemic-load">Glycemic Load:</label>
+                    <input type="number" id="glycemic-load" name="glycemic-load">
+                </div>
+                <div class="form-group">
+                    <label for="nutrition-score">Nutrition Score (%):</label>
+                    <input type="number" id="nutrition-score" name="nutrition-score">
+                </div>
+                <div class="form-group">
+                    <label for="calories">Calories (kcal):</label>
+                    <input type="number" id="calories" name="calories">
+                </div>
+                <div class="form-group">
+                    <label for="sugar">Sugar (grams):</label>
+                    <input type="number" id="sugar" name="sugar">
+                </div>
+                <div class="form-group">
+                    <label for="cholesterol">Cholesterol (milligrams):</label>
+                    <input type="number" id="cholesterol" name="cholesterol">
+                </div>
+            </div>
+            <button class="submit-button" type="submit">Submit</button>
+            <p class="instruction"> * indicates that the field is required</p>
+        </form>
 
-<%- include("partials/footer.ejs") %>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addIngredientButton = document.getElementById('addIngredient_btn');
+            const addInstructionButton = document.getElementById('addInstruction_btn');
+            const ingredientContainer = document.getElementById('ingredientContainer');
+            const instructionContainer = document.getElementById('instructionContainer');
+
+            addIngredientButton.addEventListener('click', () => {
+                const ingredientGroup = document.createElement('div');
+                ingredientGroup.classList.add('form-group');
+                ingredientGroup.innerHTML = `
+                    <input type="text" name="ingredientName" placeholder="Ingredient Name" required>
+                    <input type="number" name="ingredientAmount" placeholder="Amount" required>
+                    <input type="text" name="ingredientUnit" placeholder="Unit" required>
+                `;
+                ingredientContainer.appendChild(ingredientGroup);
+            });
+
+            addInstructionButton.addEventListener('click', () => {
+                const instructionGroup = document.createElement('div');
+                instructionGroup.classList.add('form-group');
+                instructionGroup.innerHTML = `
+                    <input type="number" name="stepNumber" placeholder="Step Number" required>
+                    <input type="text" name="instruction" placeholder="Instruction" required>
+                `;
+                instructionContainer.appendChild(instructionGroup);
+            });
+        });
+    </script>
+
+    <%- include("partials/footer.ejs") %>
