@@ -3,3 +3,11 @@ A Web-Application that allows users to input the available ingredients, their nu
 
 ## Demonstration - 
 <img src="/Screenshots/Home Page.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Find Recipes Page.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Results Page.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Filtering.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Filtered Resutls Page.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Show Recipes Page 1.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Show Recipes Page 2.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Add Recipes Page 1.png" alt="" width="750"><br><br>
+<img src="/Screenshots/Add Recipes Page 2.png" alt="" width="750">
