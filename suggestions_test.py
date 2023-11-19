@@ -11,7 +11,7 @@ browser.implicitly_wait(5)
 # Navigate to the home page
 browser.get('http://localhost:3000/')
 
-# Locate the search bar, enter a recipe name, and click search
+# Locate the search bar, enter a recipe name
 search_bar = browser.find_element(By.ID,'search_box')
 query = "Pasta"
 search_bar.send_keys(query)

@@ -59,8 +59,11 @@
                             <p>Diet Type: <span class=" from-db">
                                 <% if (dishSearched['Diet Type'].length !==0) { %>
                                     <% var diets=[]; dishSearched['Diet Type'].forEach((dietType)=>{
+                                        if (dietType && dietType.length !== 0) {
                                         diets.push(dietType[0].toUpperCase() + dietType.slice(1,dietType.length));
-                                    });%>
+                                    }else { %>
+                                        Unspecified
+                                    <% }});%>
                                     <%= diets.join(", ") %>                                   
                                 <% } else {%>
                                     Unspecified
@@ -68,7 +71,11 @@
                                 </span>
                             </p>
                             <p>Cuisine: <span class=" from-db">
-                                <% if (dishSearched.Cuisine.length !==0) { %>
+                                <% if (dishSearched.Cuisine.length !== 0) { 
+                                    dishSearched.Cuisine.forEach((cuisine)=>{
+                                        if (!cuisine || cuisine.length === 0) { %>
+                                            Unspecified
+                                    <% }});%>
                                     <%= dishSearched.Cuisine.join(", ") %>
                                 <% } else { %>
                                     Unspecified

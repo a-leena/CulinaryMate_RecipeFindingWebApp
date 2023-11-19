@@ -199,7 +199,7 @@ app.post("/results", async (req, res) => {
         });
         var dishNames = [];
         var dishes = [];
-        const allLists = getList(recipes);
+        const allLists = await getList(recipes);
         recipes.forEach((recipe) => {
             if (recipe['Dish Type'].some(item => typesMapping[dishTypeName].includes(item))) {
                 dishNames.push(recipe['Dish Name']);
@@ -250,7 +250,7 @@ app.post("/filtered-results", async (req, res) => {
         recipes.forEach((recipe) => {
             searchRecipes.push(recipe['Dish Name']);
         });
-        const allLists = getList(recipes);
+        const allLists = await getList(recipes);
         //let i=0;
         recipes.forEach((recipe) => {
             if (dishNames.includes(recipe['Dish Name'])) {
@@ -521,7 +521,7 @@ app.get("/add-recipes", async (req, res) => {
         recipes.forEach((recipe) => {
             searchRecipes.push(recipe['Dish Name']);
         });
-        const allLists = getList(recipes);
+        const allLists = await getList(recipes);
         res.render("add.ejs", {
             searchRecipes: searchRecipes,
             dishTypes: typesNames,
@@ -536,6 +536,7 @@ app.get("/add-recipes", async (req, res) => {
 
 app.post("/submit-recipe", async (req, res) => {
     const rec = req.body;
+    console.log(rec);
     const nutrients = [
         {
             Name: "Calories",
@@ -571,13 +572,23 @@ app.post("/submit-recipe", async (req, res) => {
         }
     ];
     const ingredients = [];
-    for (let i = 0; i < rec.ingredientName.length; i++) {
+    if (Array.isArray(rec.ingredientName)) {
+        for (let i = 0; i < rec.ingredientName.length; i++) {
+            ingredients.push({
+                Name: rec.ingredientName[i].trim().toLowerCase(),
+                Amount: parseFloat(rec.ingredientAmount[i]),
+                Unit: rec.ingredientUnit[i]
+            });
+        }
+    }
+    else {
         ingredients.push({
-            Name: rec.ingredientName[i].trim().toLowerCase(),
-            Amount: parseFloat(rec.ingredientAmount[i]),
-            Unit: rec.ingredientUnit[i]
+            Name: rec.ingredientName.trim().toLowerCase(),
+            Amount: parseFloat(rec.ingredientAmount),
+            Unit: rec.ingredientUnit
         });
     }
+    
     const addedDishTypes = [];
     if (Array.isArray(rec.dishType)){
         rec.dishType.forEach((type) => {
@@ -585,15 +596,24 @@ app.post("/submit-recipe", async (req, res) => {
         });
     }
     else {
-        addedDishTypes.push(rec.dishType);
+        addedDishTypes.push(typesMapping[rec.dishType][0]);
     }
     const instructions = [];
-    for (let i = 0; i < rec.stepNumber.length; i++) {
+    if (Array.isArray(rec.stepNumber)) {
+        for (let i = 0; i < rec.stepNumber.length; i++) {
+            instructions.push({
+                step: parseInt(rec.stepNumber[i]),
+                instruction: rec.instruction[i].trim()
+            });
+        }
+    }
+    else {
         instructions.push({
-            step: parseInt(rec.stepNumber[i]),
-            instruction: rec.instruction[i].trim()
+            step: parseInt(rec.stepNumber),
+            instruction: rec.instruction.trim()
         });
     }
+    
     var added_recipe = {
         "Dish Name": rec.dishName.trim(),
         "Ready in minutes": parseFloat(rec.preparationTime),
@@ -608,28 +628,29 @@ app.post("/submit-recipe", async (req, res) => {
             "Percentage Carbohydrates": rec['percentage-carbohydrates'] === '' ? 0 : parseFloat(rec['percentage-carbohydrates'])
         },
         "Weight per serving in grams": parseFloat(rec.weightPerServing),
-        Cuisine: Array.isArray(rec.cuisine)?rec.cuisine:[rec.cuisine],
+        Cuisine: Array.isArray(rec.cuisine)?rec.cuisine:[rec.cuisine?rec.cuisine:""],
         "Dish Type": addedDishTypes,
-        "Diet Type": Array.isArray(rec.dietType)?rec.dietType:[rec.dietType],
+        "Diet Type": Array.isArray(rec.dietType)?rec.dietType:[rec.dietType?rec.dietType:""],
         Instructions: instructions
     };
     var feedback = "";
     try {
-        await Recipe.insertMany([added_recipe]);
-        console.log(`Successfully added new ${added_recipe['Dish Name']} to the recipe database!`);
-        feedback = "Successfully added new recipe!";
-
-    } catch (error) {
-        console.log(error);
-        feedback = "Failed to add new recipe. Try again."
-    }
-    try {
+        try {
+            await Recipe.insertMany([added_recipe]);
+            console.log(`Successfully added ${added_recipe['Dish Name']} to the recipe database!`);
+            feedback = "Successfully added new recipe!";
+    
+        } catch (error) {
+            console.log(error);
+            feedback = "Failed to add new recipe. Try again."
+        }
         const recipes = await Recipe.find();
         var searchRecipes = [];
         recipes.forEach((recipe) => {
             searchRecipes.push(recipe['Dish Name']);
         });
-        const allLists = getList(recipes);
+        const allLists = await getList(recipes);
+        console.log(allLists)
         res.render("add.ejs", {
             searchRecipes: searchRecipes,
             dishTypes: typesNames,
@@ -649,7 +670,7 @@ app.listen(port, () => {
 });
 
 
-function getList(recipes) {
+async function getList(recipes) {
     var ingredientList = [];
     var cuisineList = [];
     var dietList = [];

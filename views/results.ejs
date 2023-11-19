@@ -57,7 +57,8 @@
                                         Any
                                     </label>
                                 </div>
-                                <% for (let i=0; i<cuisineList.length; i++) {%>
+                                <% for (let i=0; i<cuisineList.length; i++) { %>
+                                    <% if (cuisineList[i]) { %>
                                     <div id="cuisine<%=i%>Div" class="checkbox_div">
                                         <input type="checkbox" id="cuisine<%= i %>" name="<%= cuisineList[i] %>"
                                             class="checkbox">
@@ -65,7 +66,7 @@
                                             <%= cuisineList[i] %>
                                         </label>
                                     </div>
-                                    <% } %>
+                                    <% }} %>
                             </div>
                         </div>
 
@@ -81,6 +82,7 @@
                                     </label>
                                 </div>
                                 <% for (let i=0; i<dietList.length; i++) {%>
+                                    <% if (dietList[i]) { %>
                                     <div id="diet<%=i%>Div" class="checkbox_div">
                                         <input type="checkbox" id="diet<%= i %>" name="<%= dietList[i] %>"
                                             class="checkbox">
@@ -88,7 +90,7 @@
                                             <%= dietList[i] %>
                                         </label>
                                     </div>
-                                    <% } %>
+                                    <% }} %>
                             </div>
                         </div>
 
@@ -155,6 +157,12 @@
         window.onunload = function () {
             document.getElementById("filterForm").reset();
         };
+
+        document.getElementById("filterForm").addEventListener('keydown',(event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
 
         function showContent(num) {
             //Reset all tabs and contents
