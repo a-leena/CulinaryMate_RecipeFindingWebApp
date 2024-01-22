@@ -16,16 +16,16 @@ add_rec_btn = browser.find_element(By.ID, 'add_recipe_btn')
 add_rec_btn.click()
 
 new_recipe = {
-    "dishName": "New Main Course",
-    "preparationTime":123,
+    "dishName": "French Fries",
+    "preparationTime":30,
     "servings":2,
-    "weightPerServing":250,
-    "dishType":"Main Course",
-    "ingredientName":"New Ingredient",
-    "ingredientAmount":123,
-    "ingredientUnit":"New Unit",
+    "weightPerServing":100,
+    "dishType":"Starters & Appetizers",
+    "ingredientName":"Potato",
+    "ingredientAmount":4,
+    "ingredientUnit":"whole",
     "stepNumber":1,
-    "instruction":"New Instruction"
+    "instruction":"Fry the potatoes."
 }
 # Locate the input boxes and enter data, then click on submit
 dish_name = browser.find_element(By.ID,'dishName')

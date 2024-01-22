@@ -13,7 +13,7 @@ browser.get('http://localhost:3000/')
 
 # Locate the search bar, enter a recipe name, and click search
 search_bar = browser.find_element(By.ID,'search_box')
-query = "Easy Baked Parmesan Chicken"
+query = "Classic French Mussels"
 search_bar.send_keys(query)
 search_button = browser.find_element(By.ID,'search_button')
 search_button.click()

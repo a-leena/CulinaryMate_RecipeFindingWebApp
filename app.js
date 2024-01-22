@@ -4,7 +4,12 @@ import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 
-mongoose.connect("mongodb://127.0.0.1:27017/recipeDB", { useNewUrlParser: true });
+// mongoose.connect("mongodb://127.0.0.1:27017/recipeDB", { useNewUrlParser: true });
+
+// use the connection string for older NodeJS version (2.2.12 or later)
+const uri = "mongodb://aleena-admin:chipmunks@ac-hovy4u4-shard-00-00.xdpvfuq.mongodb.net:27017,ac-hovy4u4-shard-00-01.xdpvfuq.mongodb.net:27017,ac-hovy4u4-shard-00-02.xdpvfuq.mongodb.net:27017/RecipeDB?ssl=true&replicaSet=atlas-14egxt-shard-0&authSource=admin&retryWrites=true&w=majority";
+
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const nutritionObj = {
     Name: String,
@@ -42,7 +47,7 @@ const recipeSchema = new mongoose.Schema({
         instruction: String
     }]
 },
-    { collection: 'recipes' });
+    { collection: 'Recipes' });
 
 const Recipe = mongoose.model("Recipe", recipeSchema);
 
@@ -90,14 +95,14 @@ app.get("/", async (req, res) => {
     catch (error) {
         console.log(error);
     }
-    
+
 });
 
 const typesNames = ["Breakfast", "Starters & Appetizers", "Main Course", "Side-Dish", "Soup", "Salad", "Desserts", "Beverage", "Bread", "Fingerfood", "Sauce & Condiments", "Seasoning"];
 
 app.get("/find-recipes", async (req, res) => {
     try {
-        const recipes = await Recipe.find({}, {'Dish Name':1,'Dish Type': 1,_id: 0 });
+        const recipes = await Recipe.find({}, { 'Dish Name': 1, 'Dish Type': 1, _id: 0 });
         var searchRecipes = [];
         recipes.forEach((recipe) => {
             searchRecipes.push(recipe['Dish Name']);
@@ -588,9 +593,9 @@ app.post("/submit-recipe", async (req, res) => {
             Unit: rec.ingredientUnit
         });
     }
-    
+
     const addedDishTypes = [];
-    if (Array.isArray(rec.dishType)){
+    if (Array.isArray(rec.dishType)) {
         rec.dishType.forEach((type) => {
             addedDishTypes.push(typesMapping[type][0]);
         });
@@ -613,7 +618,7 @@ app.post("/submit-recipe", async (req, res) => {
             instruction: rec.instruction.trim()
         });
     }
-    
+
     var added_recipe = {
         "Dish Name": rec.dishName.trim(),
         "Ready in minutes": parseFloat(rec.preparationTime),
@@ -628,9 +633,9 @@ app.post("/submit-recipe", async (req, res) => {
             "Percentage Carbohydrates": rec['percentage-carbohydrates'] === '' ? 0 : parseFloat(rec['percentage-carbohydrates'])
         },
         "Weight per serving in grams": parseFloat(rec.weightPerServing),
-        Cuisine: Array.isArray(rec.cuisine)?rec.cuisine:[rec.cuisine?rec.cuisine:""],
+        Cuisine: Array.isArray(rec.cuisine) ? rec.cuisine : [rec.cuisine ? rec.cuisine : ""],
         "Dish Type": addedDishTypes,
-        "Diet Type": Array.isArray(rec.dietType)?rec.dietType:[rec.dietType?rec.dietType:""],
+        "Diet Type": Array.isArray(rec.dietType) ? rec.dietType : [rec.dietType ? rec.dietType : ""],
         Instructions: instructions
     };
     var feedback = "";
@@ -639,7 +644,7 @@ app.post("/submit-recipe", async (req, res) => {
             await Recipe.insertMany([added_recipe]);
             console.log(`Successfully added ${added_recipe['Dish Name']} to the recipe database!`);
             feedback = "Successfully added new recipe!";
-    
+
         } catch (error) {
             console.log(error);
             feedback = "Failed to add new recipe. Try again."

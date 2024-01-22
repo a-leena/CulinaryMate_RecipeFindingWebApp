@@ -13,7 +13,7 @@ browser.get('http://localhost:3000/')
 
 # Locate the search bar, enter a recipe name
 search_bar = browser.find_element(By.ID,'search_box')
-query = "Pasta"
+query = "salad"
 search_bar.send_keys(query)
 
 # Assertions to check if suggestions are displayed
@@ -23,7 +23,8 @@ suggestions = browser.find_elements(By.CLASS_NAME,'suggestionItem')
 assert len(suggestions) > 0
 print("Suggestions are shown")
 for suggestion in suggestions: title_element = suggestion.text
-assert query in title_element
+# print(title_element)
+assert query.lower() in title_element.lower()
 print("Suggestions contain the query")
 print("Tests Passed!")
 
