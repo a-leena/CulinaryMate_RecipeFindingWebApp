@@ -53,14 +53,14 @@ const Recipe = mongoose.model("Recipe", recipeSchema);
 
 const app = express();
 const port = 3000;
-app.use(express.static("public"));
+app.use(express.static("Public/"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 function getImages(foldername) {
     const directoryPath = "Images/" + foldername;
     var imageList = [];
 
-    fs.readdir("./Public/" + directoryPath, (err, files) => {
+    fs.readdir("Public/" + directoryPath, (err, files) => {
         if (err) {
             console.error('Error reading directory:', err);
         } else {
